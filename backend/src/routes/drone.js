@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Drone } = require('../models/drone');
+const { Drone } = require('../models/drone.js');
 
 // GET all drone records
 router.get('/', async (req, res) => {
