@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Drone Data Charts</title>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Date adapter for time axis -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <link rel="stylesheet" href="./style/chart.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f0f0f0;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        canvas {
+            background: #fff;
+            margin: 20px auto;
+            display: block;
+            max-width: 90%;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #007BFF;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Drone Confidence Over Time</h2>
+    <canvas id="lineChart"></canvas>
+
+    <h2>Class Distribution</h2>
+    <canvas id="barChart"></canvas>
+
+    <a href="./index.html">Back to Drone Records</a>
+
+    <script>
+        const classColors = {
+            1: 'red',
+            2: 'green',
+            3: 'blue',
+            4: 'purple',
+            5: 'orange'
+        };
+
+        async function fetchDroneData() {
+            try {
+                const response = await fetch('http://localhost:3000/drones');
+                return await response.json();
+            } catch (err) {
+                console.error("Error fetching drone data:", err);
+                return [];
+            }
+        }
+
+        function prepareCharts(data) {
+            const classes = [...new Set(data.map(d => d.class))];
+
+            // ---------------- Line Chart ----------------
+            const datasetsLine = classes.map(cls => {
+                const clsData = data
+                    .filter(d => d.class === cls)
+                    .map(d => ({ x: new Date(d.datetime), y: d.confidence }));
+                return {
+                    label: `Class ${cls}`,
+                    data: clsData,
+                    borderColor: classColors[cls] || 'black',
+                    backgroundColor: (classColors[cls] || 'black') + '33', // 20% opacity
+                    fill: false,
+                    tension: 0.3
+                };
+            });
+
+            const lineCtx = document.getElementById('lineChart').getContext('2d');
+            new Chart(lineCtx, {
+                type: 'line',
+                data: { datasets: datasetsLine },
+                options: {
+                    parsing: { xAxisKey: 'x', yAxisKey: 'y' },
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'minute',   // ใช้หน่วยเป็นนาที
+                                stepSize: 5,      // แกน x แสดงทุก 5 นาที
+                                displayFormats: {
+                                    minute: 'HH:mm' // format แกน x
+                                }
+                            },
+                            title: { display: true, text: 'Time' }
+                        },
+                        y: { title: { display: true, text: 'Confidence' }, min: 0, max: 1 }
+                    }
+                }
+            });
+
+            // ---------------- Bar Chart ----------------
+            const classCounts = {};
+            data.forEach(d => {
+                classCounts[d.class] = (classCounts[d.class] || 0) + 1;
+            });
+            const barLabels = Object.keys(classCounts);
+            const barData = Object.values(classCounts);
+            const barColors = barLabels.map(cls => classColors[cls] || 'black');
+
+            const barCtx = document.getElementById('barChart').getContext('2d');
+            new Chart(barCtx, {
+                type: 'bar',
+                data: {
+                    labels: barLabels,
+                    datasets: [{
+                        label: 'Count per Class',
+                        data: barData,
+                        backgroundColor: barColors
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: { title: { display: true, text: 'Class' } },
+                        y: { title: { display: true, text: 'Count' }, beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        // Fetch data and draw charts
+        fetchDroneData().then(data => prepareCharts(data));
+    </script>
+</body>
+
+</html>

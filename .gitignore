@@ -1,0 +1,46 @@
+# ===============================
+# Python
+# ===============================
+__pycache__/
+*.py[cod]
+*.egg
+*.egg-info/
+dist/
+build/
+*.log
+*.sqlite3
+*.env
+.env/
+venv/
+pip-log.txt
+.python-version
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*.ipynb
+
+# ===============================
+# Node.js
+# ===============================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment
+.env
+
+# Build
+dist/
+build/
+*.tgz
+
+# ===============================
+# OS / IDE
+# ===============================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
