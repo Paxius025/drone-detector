@@ -15,9 +15,6 @@ venv/
 pip-log.txt
 .python-version
 
-# Jupyter Notebook
-.ipynb_checkpoints/
-*.ipynb
 
 # ===============================
 # Node.js
