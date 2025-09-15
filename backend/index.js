@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const dronesRouter = require('./routes/drones');
+const dronesRouter = require('./src/routes/drone.js');
 
 const app = express();
 const port = 3000;

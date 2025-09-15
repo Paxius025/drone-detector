@@ -3,9 +3,8 @@
 URL="http://localhost:3000/drones"
 
 while true; do
-  # สุ่ม class ระหว่าง 1-5
-  # CLASS=$(( RANDOM % 5 + 1 ))
-  CLASS=1
+  # สุ่ม class ระหว่าง 0 - 5
+  CLASS=$(( RANDOM % 3 ))
 
   # สุ่ม confidence ระหว่าง 0.0 - 1.0 แบบ 2 ตำแหน่งทศนิยม
   CONFIDENCE=$(awk -v seed=$RANDOM 'BEGIN { srand(seed); printf "%.2f", rand() }')
@@ -17,6 +16,6 @@ while true; do
 
   echo " -> Sent: class=$CLASS, confidence=$CONFIDENCE"
 
-  # หน่วงเวลา 5 วินาที
-  sleep 5
+  # หน่วงเวลา 30 วินาที
+  sleep 30
 done
